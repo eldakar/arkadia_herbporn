@@ -6,7 +6,8 @@ arkadia_herbporn = arkadia_herbporn or {
     fontsize = 14,
     alchemist_mode = false,
     alchemist_last_taken_name = nil,
-    alchemist_last_taken_effect = nil
+    alchemist_last_taken_effect = nil,
+    geyser_container = nil
 }
 -- ✊
 -- 🍄
@@ -20,7 +21,8 @@ arkadia_herbporn.herbs = {
         diminish = true,
         diminish_ratio = 3,
         --symbol = "🌼"
-        symbol = "🌼"
+        symbol = "🌼",
+        file = 'deliona.png'
     },
     ["mandragora"] = {
         cooldown = 600,
@@ -59,6 +61,7 @@ function arkadia_herbporn:add_buff(bufftype)
     arkadia_herbporn.items[itemcount].type = bufftype
     arkadia_herbporn.items[itemcount].cooldown = arkadia_herbporn.herbs[bufftype].cooldown
     arkadia_herbporn.items[itemcount].effect = arkadia_herbporn.herbs[bufftype].effect
+    arkadia_herbporn.items[itemcount].file = arkadia_herbporn.herbs[bufftype].file
     cecho("<green>(buffs) <reset>" .. os.date("%H:%m:%S") .. " Added <blue>" .. bufftype .. "<reset> to the stack.\n")
 end
 
@@ -98,6 +101,77 @@ function arkadia_herbporn:nice_minutes(seconds)
 end
 
 function arkadia_herbporn:loop()
+
+    arkadia_herbporn.geyser_container = Geyser.HBox:new({
+        name = "herbporn_container",
+        x=0, y=100,
+        width = "100%",
+        height=100
+    })
+
+    local itemcount = table.size(arkadia_herbporn.items)
+
+    for i=1, itemcount, 1 do
+        if arkadia_herbporn.items[i].label then
+            
+        end
+    end
+
+    for i=1, itemcount, 1 do
+        if arkadia_herbporn.items[i].cooldown > 0 then
+            arkadia_herbporn.items[i].cooldown = arkadia_herbporn.items[i].cooldown - 1
+            if arkadia_herbporn.items[i].cooldown == 0 then
+                cecho("<green>(buffs) <reset>" .. os.date("%H:%m:%S") .. " The cooldown of <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> faded...\n")
+                arkadia_herbporn.items[i].cooldown = -1
+            else
+                arkadia_herbporn.items[i].label = Geyser.Label:new({
+                    name=os.date("%H:%m:%S" .. arkadia_herbporn.items[i].cooldown),
+                    width=64,
+                    height=64,
+                    container = self.geyser_container,
+                    v_policy=Geyser.Fixed,
+                    h_policy=Geyser.Fixed,
+                    fontSize=25,
+                }, arkadia_herbporn.geyser_container)
+                arkadia_herbporn.items[i].label:setStyleSheet(
+                    string.format("border-image: url('%s'); qproperty-alignment: 'AlignCenter | AlignVCenter';",
+                    string.format("%s/plugins/herb_porn/%s", getMudletHomeDir(), arkadia_herbporn.items[i].file))
+                )
+                arkadia_herbporn.items[i].label:echo("<font color='red'>" .. self:nice_minutes(arkadia_herbporn.items[i].cooldown))
+            end
+        end
+        if arkadia_herbporn.items[i].effect > 0 then
+            arkadia_herbporn.items[i].effect = arkadia_herbporn.items[i].effect - 1
+            if arkadia_herbporn.items[i].effect == 0 then
+                cecho("<green>(buffs) <reset>" .. os.date("%H:%m:%S") .. " The effect of <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> faded...\n")
+                arkadia_herbporn.items[i].effect = -1
+            else
+                arkadia_herbporn.items[i].label = Geyser.Label:new({
+                    name=os.date("%H:%m:%S" .. arkadia_herbporn.items[i].effect),
+                    width=64,
+                    height=64,
+                    container = self.geyser_container,
+                    v_policy=Geyser.Fixed,
+                    h_policy=Geyser.Fixed,
+                    fontSize=25,
+                }, arkadia_herbporn.geyser_container)
+                arkadia_herbporn.items[i].label:setStyleSheet(
+                    string.format("border-image: url('%s'); qproperty-alignment: 'AlignCenter | AlignVCenter';",
+                    string.format("%s/plugins/herb_porn/%s", getMudletHomeDir(), arkadia_herbporn.items[i].file))
+                )
+                arkadia_herbporn.items[i].label:echo("<font color='lawn green'>" .. self:nice_minutes(arkadia_herbporn.items[i].effect))
+
+            end
+        end
+    end
+    --arkadia_herbporn.bufflabel:echo(arkadia_herbporn.panel)
+    tempTimer(1, [[arkadia_herbporn:loop()]])
+
+   --arkadia_herbporn.geyser_container:organize()
+   --Geyser.HBox:organize ()
+end
+
+function arkadia_herbporn:loop2()
     arkadia_herbporn.panel = ""
     local itemcount = table.size(arkadia_herbporn.items)
     if itemcount == 0 then
