@@ -216,52 +216,9 @@ function arkadia_herbporn:debug_print(text)
     cecho("\n<CadetBlue>(skrypty):<purple>(alchemy) " .. text)
 end
 
-function arkadia_herbporn:alchemist_init_database()
-    db:create("alchemist", {
-        herbs={
-            "name",                 -- deliona
-            "name_2",               -- bierze co
-            "effect_type",          -- zmeczenie
-            "effect_start",         -- timestamp
-            "effect_end",           -- timestamp
-            "effect_stack_level",   -- Am I already affected? 0,1,2,3
-            "created_on",           -- timestamp
-            "created_by"            -- string
-        }})
-    self.mydb = db:get_database("alchemist")
-end
-
---Przezuwasz eliptyczny zaostrzony lisc (ogorecznik).
---Czujesz sie bardziej odwazny.
---Wachasz duzy bialy kwiat (bielun).
-
---Czujesz sie zreczniejszy.
-
 function arkadia_herbporn:alchemist_init_triggers()
     local r = tempTrigger("Przezuwasz eliptyczny zaostrzony lisc.", [[arkadia_herbporn.alchemist_last_taken_name="ogorecznik"]])
     local r = tempTrigger("Wachasz duzy bialy kwiat.", [[arkadia_herbporn.alchemist_last_taken_name="bielun"]])
-end
-
-
-function arkadia_herbporn:alchemist_start()
-    local results = db:fetch_sql(arkadia_findme.mydb.alchemist, "select name_2, effect_start from alchemist where name_2 = \"" .. arkadia_herbporn.alchemist_last_taken_name .. "\" and effect_end == null")
-
-    local effect_stack_level = #results
-    local effect_start = os.date("%c")
-    if arkadia_herbporn.alchemist_mode then
-        arkadia_herbporn:debug_print("Effect entry created for " .. arkadia_herbporn.alchemist_last_taken_name .. " at " .. effect_start .. " with 0 stacks...")
-    end
-
-    db:add(self.mydb.alchemist, {
-        name="",
-        name_2              =   arkadia_herbporn.alchemist_last_taken_name,
-        effect_type         =   arkadia_herbporn.alchemist_last_taken_effect,
-        effect_start        =   effect_start,
-        effect_end          =   nil,
-        effect_stack_level  =   effect_stack_level,
-        created_on          =   os.date("%c"),
-        created_by          =   ateam.options.own_name
-    })
 end
 
 function arkadia_herbporn:init()
