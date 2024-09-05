@@ -113,7 +113,7 @@ function arkadia_herbporn:loop()
 
     for i=1, itemcount, 1 do
         if arkadia_herbporn.items[i].label then
-            
+            arkadia_herbporn.items[i].label:hide()
         end
     end
 
