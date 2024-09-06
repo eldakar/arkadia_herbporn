@@ -13,6 +13,9 @@ arkadia_herbporn = arkadia_herbporn or {
 }
 
 arkadia_herbporn.herbs = {
+    ["default_str"] = {cooldown = 0,effect = 600,file = 'deliona.png'},
+    ["default_dex"] = {cooldown = 0,effect = 600,file = 'deliona.png'},
+    ["default_wyt"] = {cooldown = 0,effect = 600,file = 'deliona.png'},
     ["deliona"] = {cooldown = 600,effect = 15,file = 'deliona.png'},
     ["mandragora"] = {cooldown = 600,effect = 1, file = 'mandragora.png'},
     ["ogorecznik"] = {cooldown = 0,effect = 600,file = 'ogorecznik.png'},
@@ -24,8 +27,6 @@ arkadia_herbporn.herbs = {
     ["ususzona_aralia"] = {cooldown = 0,effect = 600, file = 'aralia.png'},
 }
 
---Powoli opuszczaja cie wszelkie emocje. Zadne odczucia nie zaklocaja twoich mysli. Bardziej opanowany juz chyba byc nie mozesz.
-
 function arkadia_herbporn:add_buff(bufftype)
     local itemcount = table.size(arkadia_herbporn.items)
     itemcount = itemcount + 1
@@ -35,7 +36,7 @@ function arkadia_herbporn:add_buff(bufftype)
     arkadia_herbporn.items[itemcount].effect = arkadia_herbporn.herbs[bufftype].effect
     arkadia_herbporn.items[itemcount].effect_max = arkadia_herbporn.herbs[bufftype].effect
     arkadia_herbporn.items[itemcount].file = arkadia_herbporn.herbs[bufftype].file
-    self:debug_print(os.date("%H:%m:%S") .. " Wyswietlam <yellow>" .. bufftype .. "<reset>")
+--    self:debug_print(os.date("%H:%m:%S") .. " Wyswietlam <yellow>" .. bufftype .. "<reset>")
 end
 
 
@@ -102,7 +103,7 @@ function arkadia_herbporn:loop()
         if arkadia_herbporn.items[i].effect > 0 then
             arkadia_herbporn.items[i].effect = arkadia_herbporn.items[i].effect - 1
             if arkadia_herbporn.items[i].effect == 0 then
-                self:debug_print(os.date("%H:%m:%S") .. " <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> zuzywa sie.")
+                self:debug_print(os.date("%H:%m:%s") .. " <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> zuzywa sie.")
                 arkadia_herbporn.items[i].effect = -1
             else
                 arkadia_herbporn.items[i].label = Geyser.Label:new({
@@ -116,7 +117,7 @@ function arkadia_herbporn:loop()
                 }, arkadia_herbporn.geyser_container)
                 arkadia_herbporn.items[i].label:setStyleSheet(
                     string.format("border-image: url('%s'); qproperty-alignment: 'AlignCenter | AlignVCenter';",
-                    string.format("%s/plugins/arkadia_herbporn/%s", getMudletHomeDir(), arkadia_herbporn.items[i].file))
+                    string.format("%s/plugins/arkadia_herbporn/%s.png", getMudletHomeDir(), arkadia_herbporn.items[i].type))
                 )
                 --arkadia_herbporn.items[i].label:echo("<font color='lawn green'>" .. self:nice_minutes(arkadia_herbporn.items[i].effect))
                 arkadia_herbporn.items[i].gauge = Geyser.Gauge:new({
@@ -149,49 +150,10 @@ function arkadia_herbporn:loop()
    --Geyser.HBox:organize ()
 end
 
-function arkadia_herbporn:loop2()
-    arkadia_herbporn.panel = ""
-    local itemcount = table.size(arkadia_herbporn.items)
-    if itemcount == 0 then
-        if self.bufflabel then
-            self.bufflabel:hide()
-        end
-        tempTimer(1, [[arkadia_herbporn:loop()]])
-        return
-    end
-
-    if not self.bufflabel then
-        self.label_setup()
-    end
-
-    self.bufflabel:show()
-
-    for i=1, itemcount, 1 do
-        if arkadia_herbporn.items[i].cooldown > 0 then
-            arkadia_herbporn.items[i].cooldown = arkadia_herbporn.items[i].cooldown - 1
-            if arkadia_herbporn.items[i].cooldown == 0 then
-                self:debug_print(os.date("%H:%m:%S") .. " <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> zuzywa sie.")
-                arkadia_herbporn.items[i].cooldown = -1
-            else
-                arkadia_herbporn.panel = arkadia_herbporn.panel .. "<font color='black'>|" .. arkadia_herbporn.herbs[arkadia_herbporn.items[i].type].symbol .. "<font color='red'>" .. self:nice_minutes(arkadia_herbporn.items[i].cooldown)
-            end
-        end
-        if arkadia_herbporn.items[i].effect > 0 then
-            arkadia_herbporn.items[i].effect = arkadia_herbporn.items[i].effect - 1
-            if arkadia_herbporn.items[i].effect == 0 then
-                self:debug_print(os.date("%H:%m:%S") .. " <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> zuzywa sie.")
-                arkadia_herbporn.items[i].effect = -1
-            else
-                arkadia_herbporn.panel = arkadia_herbporn.panel .. "<font color='black'>|" .. arkadia_herbporn.herbs[arkadia_herbporn.items[i].type].symbol .. "<font color='lawn green'>" .. self:nice_minutes(arkadia_herbporn.items[i].effect)
-            end
-        end
-    end
-    arkadia_herbporn.bufflabel:echo(arkadia_herbporn.panel)
-    tempTimer(1, [[arkadia_herbporn:loop()]])
-end
 
 function arkadia_herbporn:debug_print(text)
-    cecho("\n<CadetBlue>(skrypty):<purple>(alchemy) <reset>" .. text)
+    --cecho("\n<CadetBlue>(skrypty):<purple>(alchemy) <reset>" .. text)
+    cecho("\n<purple>(Alchemy) <reset>" .. os.date("%H:%m:%S") .. " ".. text)
 end
 
 function arkadia_herbporn:alchemist_init_triggers()
@@ -199,42 +161,92 @@ function arkadia_herbporn:alchemist_init_triggers()
     local r = tempTrigger("Wachasz duzy bialy kwiat.", [[arkadia_herbporn.alchemist_last_taken_name="bielun"]])
 end
 
-function arkadia_herbporn:init()
-    self.fontsize = scripts.ui.multibinds.font_size + 2
-    arkadia_herbporn.items = {}
-    arkadia_herbporn:loop()
-end
 
-arkadia_herbporn:init()
 
 --self.trigger = tempRegexTrigger("(Twoj depozyt jest pusty|Nie posiadasz wykupionego depozytu|Twoj depozyt zawiera .*)\\.$", function ()
     --self:update_box(matches[1])
 --end, 1)
 
+function arkadia_herbporn:_add(action, herb)
+    deleteLine()
+    local tmpaction = "zjedz"
+    if action == "Zjadasz" then tmpaction = "zjedz" end
+    if action == "Wachasz" then tmpaction = "powachaj" end
+    if action == "Przezuwasz" then tmpaction = "przezuj" end
+    if action == "Proszkujesz" then tmpaction = "sproszkuj" end
+    if action == "Przykladasz" then tmpaction = "przyloz" end
+    if action == "Rozgryzasz" then tmpaction = "rozgryz" end
+    if action == "Rozkruszasz" then tmpaction = "rozgryz" end
+    if action == "Wcierasz" then tmpaction = "rozgryz" end
+    if action == "Polykasz" then tmpaction = "polknij" end
+
+    
+    local tmpeffect = "<red>nic"
+    for v, k in pairs(herbs.data.herb_id_to_use[herbs.herbs_long_to_short[herb]]) do
+        if k.action  == tmpaction then
+            tmpeffect = k.effect
+        end
+    end
+
+    if herbs.herbs_long_to_short[herb] then
+        self:debug_print("<DeepPink>" .. action .. " <MediumPurple>" .. herb .. " <DeepPink>" .. herbs.herbs_long_to_short[herb] .. " <yellow>" .. tmpeffect)
+    else
+        self:debug_print("<red>Nie ma tego w bazie: " .. action .. " " .. herb)
+        return
+    end
+
+    local myplant = herbs.herbs_long_to_short[herb]
+    if arkadia_herbporn.herbs[myplant] then
+        self:add_buff(myplant)
+    elseif tmpeffect == "+zrc" then
+        self:add_buff("default_dex")
+    elseif tmpeffect == "+wyt" then --drath test
+        self:add_buff("default_wyt")
+    end
+end
+
 function arkadia_herbporn:create_triggers()
     if self.trigger then
         killTrigger(self.trigger)
     end
-    self.trigger = tempRegexTrigger("(Zjadasz|Przezuwasz|Wachasz) (jeden |jedna |dwa |dwie |trzy |)(.*)\\.$", function () self:_add(matches[4]) end, 1)
-end
-
-function arkadia_herbporn:_add(herb)
-    if herbs.herbs_long_to_short[herb] then
-        self:debug_print("Rozpoznalem uzycie " .. herb .. " czyli: " .. herbs.herbs_long_to_short[herb])
-    else
-        self:debug_print("Nie rozpoznalem tego ziola; " .. herb)
-        return
-    end
-    local myplant = herbs.herbs_long_to_short[herb]
-    if arkadia_herbporn.herbs[myplant] then
-        self:add_buff(myplant)
-    end
+    self.trigger = tempRegexTrigger("(Zjadasz|Przezuwasz|Wachasz|Proszkujesz|Rozgryzasz|Polykasz|Przykladasz|Rozkruszasz|Wcierasz) (jeden |jedna |dwa |dwie |trzy |)(.*)\\.$",function () self:_add(matches[2], matches[4]) end, nil)
 end
 
 function arkadia_herbporn:test()
     expandAlias("/fake Zjadasz dwie zolty jasny kwiat.") -- delion
     expandAlias("/fake Przezuwasz szary kolczasty korzen.") -- aralia
-    expandAlias("/fake Zjadasz dwie duzy bialy kwiat.") -- bielun
+    expandAlias("/fake Wachasz dwie duzy bialy kwiat.") -- bielun
     expandAlias("/fake Zjadasz dwie mazisty bulwiasty grzyb.") -- casur
-    expandAlias("/fake Zjadasz dziwne zoltoszare nasionko.") -- kulczyba
+    expandAlias("/fake Przezuwasz dziwne zoltoszare nasionko.") -- kulczyba
+    expandAlias("/fake Przezuwasz soczysty karminowy mech.") --dragh
 end
+
+--<string>^Czujesz sie (zreczniejsz(?:y|a)|wytrzymalsz(?:y|a)|silniejsz(?:y|a)|lepiej|mniej zmeczon(?:y|a)|znacznie lepiej|bardziej odporn(?:y|a) na trucizne|mniej zmeczon(?:y|a) mentalnie|silniejsz(?:y|a)|zreczniejsz(?:y|a)|bardziej wytrzymal(?:y|a)|bardziej inteligentn(?:y|a)|bardziej odwazn(?:y|a)|mniej zmeczon(?:y|a) mentalnie|mniej glodn(?:y|a)|lepiej|mniej zmeczon(?:y|a)|mniej niespokojn(?:y|a)|znacznie lepiej|bardziej odporn(?:y|a) na .*)\.$</string>
+--<string>Otaczajacy cie smrod rozwiewa sie.</string>
+--<string>Odnosisz wrazenie, ze bedziesz teraz sobie lepiej radzic w zauwazaniu tego, co ukryte.</string>
+
+function trigger_func_herbs_positive_effect()
+    selectCurrentLine()
+    fg("forest_green")
+    resetFormat()
+    print("test: " ..  matches[1])
+end
+
+--<string>^Czujesz sie (bardziej niezdarn(?:y|a)|mniej wytrzymal(?:y|a)|bardziej zmeczon(?:y|a)|mniej odporn(?:y|a) na trucizne|bardziej glodn(?:y|a)|oslabion(?:y|a)|bardziej niezdarn(?:y|a)|mniej wytrzymal(?:y|a)|mniej inteligentn(?:y|a)|mniej odwazn(?:y|a)|bardziej zmeczon(?:y|a) mentalnie|bardziej glodn(?:y|a)|gorzej|bardziej zmeczon(?:y|a)|bardziej niespokojn(?:y|a)|mniej odporn(?:y|a) na *)\.$</string>
+--<string>Odnosisz wrazenie, ze bedziesz teraz sobie gorzej radzic w zauwazaniu tego, co ukryte.</string>
+
+function trigger_func_herbs_negative_effect()
+    selectCurrentLine()
+    fg("orange_red")
+    resetFormat()
+    print("test: " ..  matches[1])
+end
+
+function arkadia_herbporn:init()
+    self.fontsize = scripts.ui.multibinds.font_size + 2
+    arkadia_herbporn.items = {}
+    arkadia_herbporn:create_triggers()
+    arkadia_herbporn:loop()
+end
+
+arkadia_herbporn:init()
