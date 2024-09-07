@@ -13,18 +13,21 @@ arkadia_herbporn = arkadia_herbporn or {
 }
 
 arkadia_herbporn.herbs = {
-    ["default_str"] = {cooldown = 0,effect = 600,file = 'deliona.png'},
-    ["default_dex"] = {cooldown = 0,effect = 600,file = 'deliona.png'},
-    ["default_wyt"] = {cooldown = 0,effect = 600,file = 'deliona.png'},
-    ["deliona"] = {cooldown = 600,effect = 15,file = 'deliona.png'},
-    ["mandragora"] = {cooldown = 600,effect = 1, file = 'mandragora.png'},
-    ["ogorecznik"] = {cooldown = 0,effect = 600,file = 'ogorecznik.png'},
-    ["bielun"] = {cooldown = 0,effect = 600, file = 'bielun.png'},
-    ["aralia"] = {cooldown = 0,effect = 600, file = 'aralia.png'},
-    ["casur"] = {cooldown = 0,effect = 600, file = 'casur.png'},
-    ["krasnodrzew"] = {cooldown = 0,effect = 600, file = 'krasnodrzew.png'},
-    ["kulczyba"] = {cooldown = 0,effect = 600, file='kulczyba.png'},
-    ["ususzona_aralia"] = {cooldown = 0,effect = 600, file = 'aralia.png'},
+    ["default_sil"] = {cooldown = 0,effect = 600},
+    ["default_zrc"] = {cooldown = 0,effect = 600},
+    ["default_wyt"] = {cooldown = 0,effect = 600},
+    ["default_odw"] = {cooldown = 0,effect = 600},
+    ["default_int"] = {cooldown = 0,effect = 600},
+    ["default_spo"] = {cooldown = 0,effect = 600},
+    ["deliona"] = {cooldown = 600,effect = 30},
+    ["mandragora"] = {cooldown = 600,effect = 1},
+    ["ogorecznik"] = {cooldown = 0,effect = 600},
+    ["bielun"] = {cooldown = 0,effect = 600},
+    ["aralia"] = {cooldown = 0,effect = 600},
+    ["casur"] = {cooldown = 0,effect = 600},
+    ["krasnodrzew"] = {cooldown = 0,effect = 600},
+    ["kulczyba"] = {cooldown = 0,effect = 600},
+    ["ususzona_aralia"] = {cooldown = 0,effect = 600},
 }
 
 function arkadia_herbporn:add_buff(bufftype)
@@ -75,7 +78,7 @@ function arkadia_herbporn:nice_minutes(seconds)
 end
 
 function arkadia_herbporn:loop()
-
+    --if arkadia_herbporn.geyser_container then arkadia_herbporn.geyser_container:Destroy() end
     arkadia_herbporn.geyser_container = Geyser.HBox:new({
         name = "herbporn_container",
         x="75%", y=-135,  --y=100
@@ -103,7 +106,7 @@ function arkadia_herbporn:loop()
         if arkadia_herbporn.items[i].effect > 0 then
             arkadia_herbporn.items[i].effect = arkadia_herbporn.items[i].effect - 1
             if arkadia_herbporn.items[i].effect == 0 then
-                self:debug_print(os.date("%H:%m:%s") .. " <yellow>" .. arkadia_herbporn.items[i].type .. "<reset> zuzywa sie.")
+                self:debug_print("<DeepPink>Efekt <MediumPurple>" .. arkadia_herbporn.items[i].type .. "<DeepPink> konczy sie.")
                 arkadia_herbporn.items[i].effect = -1
             else
                 arkadia_herbporn.items[i].label = Geyser.Label:new({
@@ -199,9 +202,17 @@ function arkadia_herbporn:_add(action, herb)
     if arkadia_herbporn.herbs[myplant] then
         self:add_buff(myplant)
     elseif tmpeffect == "+zrc" then
-        self:add_buff("default_dex")
+        self:add_buff("default_zrc")
     elseif tmpeffect == "+wyt" then --drath test
         self:add_buff("default_wyt")
+    elseif tmpeffect == "+sila" then
+        self:add_buff("default_sil")
+    elseif tmpeffect == "+odw" then
+        self:add_buff("default_odw")
+    elseif tmpeffect == "<medium_turquoise>+spo<grey>" then
+        self:add_buff("default_spo")
+    elseif tmpeffect == "<medium_turquoise>+int<grey>" then
+        self:add_buff("default_int")
     end
 end
 
