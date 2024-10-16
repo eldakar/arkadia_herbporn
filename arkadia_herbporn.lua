@@ -61,6 +61,20 @@ function arkadia_herbporn:del_buff(bufftype)
     end
 end
 
+function arkadia_herbporn:del_buff_force(bufftype)
+    local itemcount = table.size(arkadia_herbporn.items)
+
+    for i=1, itemcount, 1 do
+        if --arkadia_herbporn.items[i].effect == 0 and
+            --arkadia_herbporn.herbs[arkadia_herbporn.items[i].type].effect == 0 and
+            arkadia_herbporn.items[i].type == bufftype
+            then
+                arkadia_herbporn.items[i].effect = -1
+            end
+    end
+end
+
+
 function arkadia_herbporn:refresh_buff(bufftype)
     local itemcount = table.size(arkadia_herbporn.items)
 
