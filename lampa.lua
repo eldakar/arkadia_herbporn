@@ -37,6 +37,7 @@ function scripts.inv.lamp:empty_bottle()
 end
 
 function trigger_func_skrypty_inventory_lampa_lampa_timery_start()
+    arkadia_herbporn:del_buff_force("lampa")
     arkadia_herbporn:add_buff("lampa")
     enableTimer("lamp_info_timer")
     scripts.inv.lamp.working = true
@@ -49,7 +50,7 @@ function trigger_func_skrypty_inventory_lampa_lampa_timery_start()
 end
 
 function trigger_func_skrypty_inventory_lampa_lampa_timery_off()
-    arkadia_herbporn:del_buff("lampa")
+    arkadia_herbporn:del_buff_force("lampa")
     if scripts.inv.lamp.working == true then
         disableTimer("lamp_info_timer")
         scripts.inv.lamp.working = false
@@ -63,7 +64,10 @@ function trigger_func_skrypty_inventory_lampa_lampa_timery_off()
 end
 
 function trigger_func_skrypty_inventory_lampa_lampa_timery_dopelnienie()
-    arkadia_herbporn:refresh_buff("lampa")
+    --arkadia_herbporn:refresh_buff("lampa")
+    arkadia_herbporn:del_buff_force("lampa")
+    arkadia_herbporn:add_buff("lampa")
+    
     selectCurrentLine()
     fg("yellow")
     resetFormat()
